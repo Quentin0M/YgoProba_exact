@@ -248,7 +248,7 @@ void Graph::mergeAll() {
 	for (Edge* e : this->edges) {
 		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
 	}
-	*/
+	****/
 	this->flag = true;
 }
 

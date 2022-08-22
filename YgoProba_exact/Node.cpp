@@ -1,41 +1,68 @@
 #include "Node.h"
+#include <iostream>
+#include "util.cpp"
 
+int Node::samplesize = 0;
+std::vector<int> Node::obj = std::vector<int>();
 
-Node::Node(const std::vector<int>& w, const std::vector<Edge*>& e):Vertex(e) {
-	this->weights = std::vector<int>(w.begin(), w.end());
+Node::Node(int n, const std::vector<int>& w, std::vector<int> obj, int ss) :Vertex(std::vector<Edge*>()) {
+	this->weights = std::vector<int>(w);
 	for (int e : this->weights) this->sumw += e;
 	this->colors = std::vector<int>(this->weights.size(), 0);
+	this->obj = obj;
+	this->samplesize = ss;
+	this->N = n;
+	this->vertices = std::vector<Vertex*>();
+	this->vertices.push_back((Vertex*)this);
+}
+
+Node::Node(const std::vector<int>& w, const std::vector<Edge*>& e, std::vector<int> obj,int ss):Vertex(e) {
+	this->weights = std::vector<int>(w);
+	for (int e : this->weights) this->sumw += e;
+	this->colors = std::vector<int>(this->weights.size(), 0);
+	this->obj = obj;
+	this->samplesize = ss;
+	this->vertices = std::vector<Vertex*>();
+	this->vertices.push_back((Vertex*)this);
 }
 
 Node::Node(const std::vector<int>& w, const int& N, const double& P, const std::vector<Edge*>& e) :Vertex(e) {
 
-	this->weights = std::vector<int>(w.begin(), w.end());
+	this->weights = std::vector<int>(w);
 	this->N = N;
 	this->P = P;
 	this->sumw = 0;
 	for (int e : this->weights) this->sumw += e;
+	this->vertices = std::vector<Vertex*>();
+	this->vertices.push_back((Vertex*)this);
 }
 
 
 Node::Node(const std::vector<int>& w, std::vector<int>& c, const int& N, const int& h, const int& sumw, const double& P,const int& hash, const std::vector<Edge*>& e) :Vertex(e) {
-	this->weights = std::vector<int>(w.begin(), w.end());
+	this->weights = std::vector<int>(w);
 	this->N = N;
 	this->h = h;
 	this->sumw = sumw;
 	this->P = P;
-	this->colors = std::vector<int>(c.begin(), c.end());
+	this->colors = std::vector<int>(c);
 	this->hash = hash;
+	this->obj = obj;
+	this->vertices = std::vector<Vertex*>();
+	this->vertices.push_back((Vertex*)this);
 
 }
 
 Node::Node(const Node& n):Vertex(n) {
-	this->weights = std::vector<int>(n.weights.begin(), n.weights.end());
+	this->weights = std::vector<int>(n.weights);
 	this->N = n.N;
 	this->h = n.h;
 	this->sumw = n.sumw;
 	this->P = n.P;
-	this->colors = std::vector<int>(n.colors.begin(), n.colors.end());
+	this->colors = std::vector<int>(n.colors);
 	this->hash = n.hash;
+	this->obj = n.obj;
+	this->vertices = std::vector<Vertex*>();
+	this->vertices.push_back((Vertex*)this);
 }
 
 std::vector<Edge*> Node::getEdges() {
@@ -45,12 +72,15 @@ std::vector<Edge*> Node::getEdges() {
 
 void Node::draw(int color) {
 	if (color == -1) {
-		this->P *= (this->N - this->sumw) / this->N;
+		std::cout << this->P << " * (" << this->N << " - " << this->sumw << ") / " << this->N << " = ";
+		this->P *= ((double)(this->N - this->sumw)) / ((double)this->N);
+		std::cout << this->P << std::endl;
 	}
 	else {
-		this->P *= this->weights[color] / this->N;
+		this->P *= ((double)this->weights[color]) / ((double)this->N);
 		this->weights[color]--;
 		this->sumw--;
+		this->colors[color]++;
 	}
 	this->N--;
 	this->h++;
@@ -67,19 +97,87 @@ Node Node::operator*(const Node& n) {
 
 
 Vertex* Node::convert() {
+	std::cout << "###################################################################" << std::endl;
+	std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
+	std::cout << "Node " << vtos(this->colors) << std::endl;
+	std::cout << "Total P of the node = " << this->P << std::endl;
+	std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
 	std::vector<Vertex*> vlist;
 	std::vector<Edge*> elist;
+	//Node* tmp;
+	double successP = 0.;
+	std::cout << "check" << std::endl;
 
-	for (int i = -1; i < this->colors.size(); i++) {
+	for (int i = -1; i < (int)this->colors.size(); i++) {
+		std::cout << "Drawing " << i << std::endl;
+		//tmp = new Node(*this);
 		vlist.push_back(new Node(*this));
 		vlist[vlist.size() - 1]->wipeEdges();
 		((Node*)vlist[vlist.size() - 1])->draw(i);
-		if (!((Node*)vlist[vlist.size() - 1])->Pn()) vlist.pop_back();
-	}
-	for (int i = 0; i < vlist.size(); i++) {
-		for (int j = i + 1; j < vlist.size(); j++) {
-			elist.push_back(new Edge(vlist[i], vlist[j], this->hash));
+		//Removing all nodes whose P=0 or nodes that can't be a success
+		if (((Node*)vlist[vlist.size() - 1])->isdeadend()) {
+			std::cout << "Dead end" << std::endl;
+			vlist.pop_back();
+		}
+		else if (!((Node*)vlist[vlist.size() - 1])->Pn()) {
+			std::cout << "Node with P = 0" << std::endl;
+			vlist.pop_back();
+		}
+		//Removing nodes which are already successes and getting their probabilities
+		else if (((Node*)vlist[vlist.size() - 1])->isSuccess()) {
+			std::cout << "Success with P = " << ((Node*)vlist[vlist.size() - 1])->Pn() << std::endl;
+			successP += ((Node*)vlist[vlist.size() - 1])->Pn();
+			vlist.pop_back();
 		}
 	}
-	return new Graph(vlist, elist, this->getEdges());
+	std::cout << "Finished drawing" << endl;
+	for (int i = 0; i < ((int)vlist.size())-1; i++) {
+		for (int j = i + 1; j < vlist.size(); j++) {
+			elist.push_back(new Edge(vlist[i], vlist[j], this->hash));
+			vlist[i]->addEdge(elist.back());
+			vlist[j]->addEdge(elist.back());
+		}
+	}
+	std::cout << "edges created: " << std::endl;
+	for (Edge* e : elist) {
+		std::cout << "[" << vtos(((Node*)e->getV1())->getColors()) << " , " << vtos(((Node*)e->getV2())->getColors()) << "]" << std::endl;
+	}
+	Graph* G = new Graph(vlist, elist, this->getEdges());
+	for (Edge* e : this->getEdges()) {
+		e->Vswap(this, G);
+		//std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
+	}
+	G->setP(successP);
+	//std::cout << ( * ((Node*)G->getVertices()[0]) == *((Node*)G->getVertices()[0]) )<< std::endl;
+	
+	//std::cout << G->isEmpty() << std::endl;
+	return (Vertex*) (G);
+}
+
+bool Node::isSuccess() {
+	for (int i = 0; i < colors.size(); i++)
+		if (colors[i] < obj[i]) return false;
+	return true;
+}
+
+bool Node::isdeadend() {
+	std::vector<int> tmp;
+	for (int i = 0; i < this->obj.size(); i++) {
+		tmp.push_back(this->obj[i] - this->colors[i]);
+	}
+	// std::transform(this->obj.begin(), this->obj.end(), this->colors.begin(), tmp, std::minus<int>());
+	int sum = 0;
+	// if an element is there more time than needed, it shouldn't make me want less of the others
+	for (int e : tmp) sum += (e < 0 ? 0 : e); 
+	return (this->samplesize - this->h) < sum;
+}
+
+void Node::setEdges(const std::vector<Edge*>& e) { Vertex::setEdges(e); }
+
+
+
+std::vector<Vertex*> Node::getVertices() {
+	std::vector<Vertex*> res;
+	res.push_back(this);
+	return res;
 }

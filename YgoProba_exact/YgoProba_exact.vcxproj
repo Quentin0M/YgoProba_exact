@@ -130,6 +130,8 @@
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="YgoProba_exact.cpp" />
   </ItemGroup>
@@ -137,7 +139,16 @@
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Solver.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="YgoProba_exact.aps" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="YgoProba_exact.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

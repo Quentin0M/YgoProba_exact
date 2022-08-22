@@ -4,8 +4,10 @@
 
 int main()
 {
-    std::cout << "P=" << Solver().buildnsolve();
-    std::cin.ignore();
+    for (;;) {
+        std::cout << "P=" << Solver().buildnsolve();
+        std::cin.ignore();
+    }
     return 0;
 }
 

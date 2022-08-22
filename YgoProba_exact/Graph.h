@@ -42,6 +42,7 @@ public:
 	bool checkEdge(Edge*e);
 
 	void removeinneredge(Edge*);
+	void nullinneredge(Edge*);
 	void removeVertex(Vertex*);
 
 };

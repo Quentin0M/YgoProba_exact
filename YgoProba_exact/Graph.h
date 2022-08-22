@@ -41,6 +41,8 @@ public:
 	bool isEmpty() { return vertices.empty(); }
 	bool checkEdge(Edge*e);
 
+	std::string typeCheck() { return "Graph"; }
+
 	void removeinneredge(Edge*);
 	void nullinneredge(Edge*);
 	void removeVertex(Vertex*);

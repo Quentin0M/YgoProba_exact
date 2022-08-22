@@ -157,14 +157,19 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	/*std::cout << "V1's edges:\n";
 	for (Edge* e : V1->getEdges()) {
 		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
+	}
+
+	std::cout << "V2's edges:\n";
+	for (Edge* e : V2->getEdges()) {
+		try { std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl; }
+		catch (...) {
+			std::cout<< ((Node*)e->getV1())->getColors().size()<<"==="<< ((Node*)e->getV2())->getColors().size()<<std::endl;
+		}
 	}*/
+
+
 	for (Edge* e : V1->getEdges())
 		e->Vswap(V1, Vm);
-
-	/*std::cout << "V2's edges:\n";
-	for (Edge* e : V2->getEdges()) {
-		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
-	}*/
 	for (Edge* e : V2->getEdges())
 		e->Vswap(V2, Vm);
 
@@ -175,11 +180,13 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	if (n = ((Graph*)E->getV1())->simplify()) {
 		this->removeVertex(E->getV1());
 		this->vertices.push_back(n);
-		for (Edge* e : E->getV1()->getEdges())
+		for (Edge* e : E->getV1()->getEdges()) {
 			e->Vswap(E->getV1(), n);
+		}
 	}
 	if (E->getV1()->getVertices().empty()) {
-		for (Edge* e : E->getV1()->getEdges()) {
+		vector<Edge*> buf(E->getV1()->getEdges());
+		for (Edge* e : buf) {
 			std::cout << "AAAAAAAAAAA" << std::endl;
 			//this->nullinneredge(e);
 			e->selfdestruct();
@@ -191,11 +198,13 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	if (n = ((Graph*)E->getV2())->simplify()) {
 		this->removeVertex(E->getV2());
 		this->vertices.push_back(n);
-		for (Edge* e : E->getV2()->getEdges())
+		for (Edge* e : E->getV2()->getEdges()) {
 			e->Vswap(E->getV2(), n);
+		}
 	}
 	if (E->getV2()->getVertices().empty()) {
-		for (Edge* e : E->getV2()->getEdges()) {
+		vector<Edge*> buf(E->getV2()->getEdges());
+		for (Edge* e : buf) {
 			std::cout << "BBBBBBBBBBBBBBBBB" << std::endl;
 			//this->nullinneredge(e);
 			e->selfdestruct();
@@ -216,7 +225,8 @@ void Graph::mergeAll() {
 	std::cout << "Entering mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
 	std::vector<Edge*> fresh;
 	int i = 0;
-	for(Edge* e:this->edges){
+	std::vector<Edge*> old(this->edges);
+	for(Edge* e:old){
 		std::cout << "++++++++++++++++++++++++++++++++++++++++\n";
 		std::cout << ++i << "/" << this->edges.size() << std::endl;
 		std::cout << "++++++++++++++++++++++++++++++++++++++++\n";
@@ -227,6 +237,11 @@ void Graph::mergeAll() {
 			std::cout<<"No edges to insert"<<std::endl;
 			continue;
 		}
+		/*
+		for (Edge* e : tmp) {
+			std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
+		}*/
+
 		for (Edge* f : fresh) {
 			for (int j = 0; j < tmp.size();j++) {
 				if (tmp[j] == f) {
@@ -243,12 +258,76 @@ void Graph::mergeAll() {
 		fresh.insert(fresh.end(), tmp.begin(), tmp.end());
 	}
 	this->edges = fresh;
+
+	vector<Vertex*> trash;
+	for (Vertex* n : this->vertices) {
+		try {
+			((Node*)n)->getColors().size();
+		}
+		catch(...) {
+			trash.push_back(n);
+			for (Edge* e : n->getEdges()) {
+				this->removeinneredge(e);
+				e->selfdestruct();
+			}
+		}
+	}
+	std::cout << "Removing " << trash.size() << " nodes" << std::endl;
+	for (Vertex* v : trash) {
+		this->removeVertex(v);
+	}
+
+	/**
+	for (Edge* e : fresh) {
+		Vertex* v = e->getV1();
+		if (v->getVertices().size() > 1) {
+			std::cout << "Unwanted graph remaining:" << std::endl;
+			for (Vertex* w : v->getVertices()) {
+				std::cout << vtos(((Node*)w)->getColors()) << "  ";
+			}
+			std::cout << endl;
+		}else{
+			std::cout << "Actual node ("<<v->getVertices().size()<<") ";
+			try {
+				std::cout << vtos(((Node*)v)->getColors()) << std::endl;
+			}
+			catch (...) { 
+				std::cout << "Problem node linked to " << v->getEdges().size() << " other nodes" << std::endl; 
+				if (v->getEdges().size())
+					std::cout << "Other node: " << vtos(((Node*)v->getEdges().back()->Other(v))->getColors()) << std::endl;
+				this->removeVertex(e->getV1());
+				this->removeinneredge(e);
+				e->getV2()->removeEdge(e);
+			}
+		}
+		v = e->getV2();
+		if (v->getVertices().size() > 1) {
+			std::cout << "Unwanted graph remaining:" << std::endl;
+			for (Vertex* w : v->getVertices()) {
+				std::cout << vtos(((Node*)w)->getColors()) << "  ";
+			}
+			std::cout << endl;
+		}
+		else {
+			std::cout << "Actual node (" << v->getVertices().size() << ") ";
+			try {
+				std::cout << vtos(((Node*)v)->getColors()) << std::endl;
+			}
+			catch (...) { std::cout << "Problem node linked to " << v->getEdges().size() << " other nodes" << std::endl;
+			if (v->getEdges().size())
+				std::cout << "Other node: " << vtos(((Node*)v->getEdges().back()->Other(v))->getColors()) << std::endl;
+			this->removeVertex(e->getV2());
+			this->removeinneredge(e);
+			e->getV1()->removeEdge(e);
+			}
+		}
+	}
+	**/
+
 	std::cout<<"Finishing mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
-	/****
 	for (Edge* e : this->edges) {
 		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
 	}
-	****/
 	this->flag = true;
 }
 

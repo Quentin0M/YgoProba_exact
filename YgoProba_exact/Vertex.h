@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 #include "Edge.h"
 
 class Edge;
@@ -26,6 +27,11 @@ public:
 	void removeEdge(Edge* e);
 
 	bool checkEdge(Edge* e);
+
+
+	std::string typeCheck() { return "Vertex"; }
+
+	std::vector<int> getColors() { return std::vector<int>(); }
 
 	std::vector<Vertex*> getVertices();
 };

@@ -43,6 +43,7 @@ public:
 	bool isdeadend();
 
 	//void test() { //std::cout << "test\n"; }
+	std::string typeCheck() { return "Node"; }
 
 	void draw(int); //draws a ball (index of the success or -1)
 	Vertex* convert(); //expands the node into a graph by drawing as many colors as possible.

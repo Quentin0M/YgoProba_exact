@@ -244,7 +244,7 @@ void Graph::mergeAll() {
 	}
 	this->edges = fresh;
 	std::cout<<"Finishing mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
-	/*
+	/****
 	for (Edge* e : this->edges) {
 		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
 	}

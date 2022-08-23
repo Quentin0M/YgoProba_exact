@@ -26,7 +26,7 @@ Node::Node(const std::vector<int>& w, const std::vector<Edge*>& e, std::vector<i
 	this->vertices.push_back((Vertex*)this);
 }
 
-Node::Node(const std::vector<int>& w, const int& N, const double& P, const std::vector<Edge*>& e) :Vertex(e) {
+Node::Node(const std::vector<int>& w, const int& N, const long double& P, const std::vector<Edge*>& e) :Vertex(e) {
 
 	this->weights = std::vector<int>(w);
 	this->N = N;
@@ -38,7 +38,7 @@ Node::Node(const std::vector<int>& w, const int& N, const double& P, const std::
 }
 
 
-Node::Node(const std::vector<int>& w, std::vector<int>& c, const int& N, const int& h, const int& sumw, const double& P,const int& hash, const std::vector<Edge*>& e) :Vertex(e) {
+Node::Node(const std::vector<int>& w, std::vector<int>& c, const int& N, const int& h, const int& sumw, const long double& P,const int& hash, const std::vector<Edge*>& e) :Vertex(e) {
 	this->weights = std::vector<int>(w);
 	this->N = N;
 	this->h = h;
@@ -73,11 +73,11 @@ std::vector<Edge*> Node::getEdges() {
 void Node::draw(int color) {
 	if (color == -1) {
 		std::cout << this->P << " * (" << this->N << " - " << this->sumw << ") / " << this->N << " = ";
-		this->P *= ((double)(this->N - this->sumw)) / ((double)this->N);
+		this->P *= ((long double)(this->N - this->sumw)) / ((long double)this->N);
 		std::cout << this->P << std::endl;
 	}
 	else {
-		this->P *= ((double)this->weights[color]) / ((double)this->N);
+		this->P *= ((long double)this->weights[color]) / ((long double)this->N);
 		this->weights[color]--;
 		this->sumw--;
 		this->colors[color]++;
@@ -99,13 +99,13 @@ Node Node::operator*(const Node& n) {
 Vertex* Node::convert() {
 	std::cout << "###################################################################" << std::endl;
 	std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
-	std::cout << "Node " << vtos(this->colors) << std::endl;
+	std::cout << "Node " << this->toString() << std::endl;
 	std::cout << "Total P of the node = " << this->P << std::endl;
 	std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
 	std::vector<Vertex*> vlist;
 	std::vector<Edge*> elist;
 	//Node* tmp;
-	double successP = 0.;
+	long double successP = 0.L;
 	std::cout << "check" << std::endl;
 
 	for (int i = -1; i < (int)this->colors.size(); i++) {
@@ -113,20 +113,20 @@ Vertex* Node::convert() {
 		//tmp = new Node(*this);
 		vlist.push_back(new Node(*this));
 		vlist[vlist.size() - 1]->wipeEdges();
-		((Node*)vlist[vlist.size() - 1])->draw(i);
+		((Node*)vlist.back())->draw(i);
 		//Removing all nodes whose P=0 or nodes that can't be a success
-		if (((Node*)vlist[vlist.size() - 1])->isdeadend()) {
+		if (((Node*)vlist.back())->isdeadend()) {
 			std::cout << "Dead end" << std::endl;
 			vlist.pop_back();
 		}
-		else if (!((Node*)vlist[vlist.size() - 1])->Pn()) {
+		else if (!((Node*)vlist.back())->Pn()) {
 			std::cout << "Node with P = 0" << std::endl;
 			vlist.pop_back();
 		}
 		//Removing nodes which are already successes and getting their probabilities
-		else if (((Node*)vlist[vlist.size() - 1])->isSuccess()) {
-			std::cout << "Success with P = " << ((Node*)vlist[vlist.size() - 1])->Pn() << std::endl;
-			successP += ((Node*)vlist[vlist.size() - 1])->Pn();
+		else if (((Node*)vlist.back())->isSuccess()) {
+			std::cout << "Success with P = " << ((Node*)vlist.back())->Pn() << std::endl;
+			successP += ((Node*)vlist.back())->Pn();
 			vlist.pop_back();
 		}
 	}
@@ -147,7 +147,9 @@ Vertex* Node::convert() {
 		e->Vswap(this, G);
 		//std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
 	}
-	G->setP(successP);
+	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
+	((Graph*)G)->setP(successP);
+	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
 	//std::cout << ( * ((Node*)G->getVertices()[0]) == *((Node*)G->getVertices()[0]) )<< std::endl;
 	
 	//std::cout << G->isEmpty() << std::endl;
@@ -180,4 +182,12 @@ std::vector<Vertex*> Node::getVertices() {
 	std::vector<Vertex*> res;
 	res.push_back(this);
 	return res;
+}
+
+std::string Node::toString() {
+	return vtos(this->colors);
+}
+
+void Node::setP(long double p) {
+	Vertex::setP(p);
 }

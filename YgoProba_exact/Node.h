@@ -18,7 +18,7 @@ private:
 	int N; //remaining balls in the urn
 	int h = 0; //size of the hand so far
 	int sumw; // number of remaining colors in the urn
-	double P=1; // probability of the leaf(or combined leaves)
+	//long double P=1.L; // probability of the leaf(or combined leaves)
 	int hash = 0;
 
 	
@@ -32,18 +32,21 @@ public:
 	~Node() {};
 	Node(int n, const std::vector<int>& w, std::vector<int> obj, int ss); // used to create the first node
 	Node(const std::vector<int>& w, const std::vector<Edge*>& e, std::vector<int> obj,int ss); // used to create the first node
-	Node(const std::vector<int>&, const int&, const double&, const std::vector<Edge*>& e); // probably unused
-	Node(const std::vector<int>&, std::vector<int>&, const int&, const int&, const int&, const double&,const int&, const std::vector<Edge*>& e); //used to copy another node
+	Node(const std::vector<int>&, const int&, const long double&, const std::vector<Edge*>& e); // probably unused
+	Node(const std::vector<int>&, std::vector<int>&, const int&, const int&, const int&, const long double&,const int&, const std::vector<Edge*>& e); //used to copy another node
 
 	std::vector<Edge*> getEdges() ;
 	void setEdges(const std::vector<Edge*>& e);
 	std::vector<int> getColors() { return this->colors; }
-	double Pn() { return this->P; }
+	long double Pn() { return this->P; }
 	bool isSuccess();
 	bool isdeadend();
 
 	//void test() { //std::cout << "test\n"; }
 	std::string typeCheck() { return "Node"; }
+	std::string toString();
+
+	void setP(long double);
 
 	void draw(int); //draws a ball (index of the success or -1)
 	Vertex* convert(); //expands the node into a graph by drawing as many colors as possible.

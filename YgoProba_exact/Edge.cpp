@@ -3,6 +3,7 @@
 #include "Node.h"
 #include <iostream>
 #include "util.cpp"
+#include"exceptions.h"
 
 Edge::Edge(Vertex* V1, Vertex* V2, const int& h) {
 	this->V1 = V1;
@@ -17,8 +18,8 @@ void Edge::Vswap(Vertex* A, Vertex* B) {
 	else if (this->V2 == A)
 		this->V2 = B;
 	else std::cout << "No valid target" << std::endl;
-	A->removeEdge(this);
-	B->addEdge(this);
+	if(A) A->removeEdge(this);
+	if(B) B->addEdge(this);
 }
 
 Vertex* Edge::Other(Vertex* v) {
@@ -29,7 +30,11 @@ Vertex* Edge::Other(Vertex* v) {
 void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 	Vertex* S = this->V1;
 	Vertex* T = this->V2;
-	if (!S || !T) return;
+	std::cout << "Entering GEN" << std::endl;
+	if (!S && !T) throw new SnT_null_exception;
+	if (!S) throw new S_null_exception;
+	if (!T) throw new T_null_exception;
+	std::cout << "Valid edge" << std::endl;
 	std::vector<std::string> Snodes;
 	std::vector<std::string> Tnodes;
 	for (Vertex* v : S->getVertices())
@@ -58,7 +63,11 @@ void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 }
 
 void Edge::selfdestruct() {
-	this->V1->removeEdge(this);
-	this->V2->removeEdge(this);
+	if(V1) this->V1->removeEdge(this);
+	if(V2) this->V2->removeEdge(this);
 	delete this;
+}
+
+bool Edge::isMinimal() {
+	return ((this->V1->getVertices().size() == 1) && (this->V2->getVertices().size() == 1));
 }

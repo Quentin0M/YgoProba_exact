@@ -8,7 +8,7 @@ Solver::Solver(int u, int ss, std::vector<int> w, std::vector<int> obj) {
 	this->G = (Graph*)(new Node(u, w, obj, ss))->convert();
 }
 
-double Solver::buildnsolve() {
+long double Solver::buildnsolve() {
 	int N, h, tmp;
 	std::vector<int> obj, weights;
 	std::string input;
@@ -79,7 +79,7 @@ double Solver::buildnsolve() {
 	return this->solve();
 }
 
-double Solver::solve() {
+long double Solver::solve() {
 	while (!G->isEmpty()) {
 		std::cout << "hello" << std::endl;
 		std::cout << "============================================\n";

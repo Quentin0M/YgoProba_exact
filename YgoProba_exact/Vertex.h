@@ -12,6 +12,7 @@ private:
 	std::vector<Edge*> attached_edges;
 protected:
 	std::vector<Vertex*> vertices;
+	long double P = 1.L;
 public:
 	Vertex();
 	~Vertex();
@@ -34,5 +35,9 @@ public:
 	std::vector<int> getColors() { return std::vector<int>(); }
 
 	std::vector<Vertex*> getVertices();
+
+	void setP(long double p) { this->P = p; }
+
+	std::string toString();
 };
 

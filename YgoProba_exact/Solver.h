@@ -6,12 +6,12 @@ class Solver
 {
 private:
 	Graph* G = NULL;
-	double P = 0.;
+	long double P = 0.L;
 
 public:
 	Solver(int urnSize, int samplesize,std::vector<int> weights, std::vector<int> obj);
 	Solver() {}
-	double buildnsolve();
-	double solve();
+	long double buildnsolve();
+	long double solve();
 };
 

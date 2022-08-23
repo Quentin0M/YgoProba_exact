@@ -6,13 +6,13 @@
 #include <vector>
 
 class Edge;
-class Vertex;
+//class Vertex;
 class Graph: public Vertex
 {
 private:
 	//std::vector<Vertex*> vertices;
 	std::vector<Edge*> edges;
-	double P = 0;
+	long double proba = 0.L;
 
 	bool flag = false;
 public:
@@ -35,8 +35,10 @@ public:
 	//functions that expand the graph to the next draw
 	void expand();
 
-	void setP(double p) { this->P = p; }
-	double getP() { return this->P; }
+	void setP(long double p);
+	long double getP() { return this->P; }
+	long double getProba() { return this->proba; }
+	void setProba(long double p) { this->proba = p; }
 
 	bool isEmpty() { return vertices.empty(); }
 	bool checkEdge(Edge*e);
@@ -46,6 +48,8 @@ public:
 	void removeinneredge(Edge*);
 	void nullinneredge(Edge*);
 	void removeVertex(Vertex*);
+
+	std::string toString();
 
 };
 

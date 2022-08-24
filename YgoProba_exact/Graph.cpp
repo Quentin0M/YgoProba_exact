@@ -80,105 +80,68 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	Vertex* V1=NULL;
 	Vertex* V2=NULL;
 	Vertex* n;
+
+	Vertex* W1 = E->getV1();
+	Vertex* W2 = E->getV2();
 	
 	std::cout << "Entering merge"<<std::endl;
 
 	try { E->getEquivalentNodes(&V1, &V2); }
+
+
 	catch (SnT_null_exception* e) {
+		this->removeinneredge(E);
 		E->selfdestruct();
 
 		return std::vector<Edge*>();
 	}
 	catch (S_null_exception* e) {
-		E->getV2()->removeEdge(E);
-		//this->removeinneredge(E);
-		//E->selfdestruct();
-
-		/*
-		((Graph*)E->getV2())->removeVertex(V2);
-		if (n = ((Graph*)E->getV2())->simplify()) {
-			this->removeVertex(E->getV2());
-			this->vertices.push_back(n);
-			for (Edge* e : E->getV2()->getEdges())
-				e->Vswap(E->getV2(), n);
-		}
-		if (E->getV2()->getVertices().empty()) {
-			for (Edge* e : E->getV2()->getEdges()) {
-				//this->nullinneredge(e);
-				e->selfdestruct();
-			}
-			this->removeVertex(E->getV2());
-		}
-		*/
+		this->removeinneredge(E);
 		E->selfdestruct();
 		return std::vector<Edge*>();
 	}
 	catch (T_null_exception* e) {
-		E->getV1()->removeEdge(E);
-		//this->removeinneredge(E);
-		//E->selfdestruct();
-		/*
-		if (n = ((Graph*)E->getV1())->simplify()) {
-			this->removeVertex(E->getV1());
-			this->vertices.push_back(n);
-			for (Edge* e : E->getV1()->getEdges())
-				e->Vswap(E->getV1(), n);
-		}
-		if (E->getV1()->getVertices().empty()) {
-			for (Edge* e : E->getV1()->getEdges()) {
-				//this->nullinneredge(e);
-				e->selfdestruct();
-			}
-			this->removeVertex(E->getV1());
-		}
-		*/
+		this->removeinneredge(E);
 		E->selfdestruct();
 		return std::vector<Edge*>();
 	}
 	std::cout << "GEN ended" << std::endl;
+	this->removeinneredge(E);
+	E->selfdestruct();
 	if (!V1) {
-		E->getV1()->removeEdge(E);
-		E->getV2()->removeEdge(E);
+
+		//W1->removeEdge(E);
+		//W2->removeEdge(E);
 		//this->removeinneredge(E);
 		//E->selfdestruct();
 		
-		if (n = ((Graph*)E->getV1())->simplify()) {
-			this->removeVertex(E->getV1());
-			this->vertices.push_back(n);
-			for (Edge* e : E->getV1()->getEdges())
-				e->Vswap(E->getV1(), n);
-		}
-		if (E->getV1()->getVertices().empty()) {
-			for (Edge* e : E->getV1()->getEdges()) {
-				//this->nullinneredge(e);
-				e->selfdestruct();
+		if (n = ((Graph*)W1)->simplify()) {
+			if (!(n->getVertices().empty())) {
+				this->removeVertex(W1);
+				this->vertices.push_back(n);
+				for (Edge* e : W1->getEdges())
+					e->Vswap(W1, n);
 			}
-			this->removeVertex(E->getV1());
 		}
 
-		((Graph*)E->getV2())->removeVertex(V2);
-		if (n = ((Graph*)E->getV2())->simplify()) {
-			this->removeVertex(E->getV2());
-			this->vertices.push_back(n);
-			for (Edge* e : E->getV2()->getEdges())
-				e->Vswap(E->getV2(), n);
-		}
-		if (E->getV2()->getVertices().empty()) {
-			for (Edge* e : E->getV2()->getEdges()) {
-				//this->nullinneredge(e);
-				e->selfdestruct();
+		//((Graph*)W2)->removeVertex(V2);
+		if (n = ((Graph*)W2)->simplify()) {
+			if (!(n->getVertices().empty())) {
+				this->removeVertex(W2);
+				this->vertices.push_back(n);
+				for (Edge* e : W2->getEdges())
+					e->Vswap(W2, n);
 			}
-			this->removeVertex(E->getV2());
 		}
 
-		E->selfdestruct();
+		//E->selfdestruct();
 
 		/*
 		std::cout << "Finishing merge (no merge)" << std::endl;
 		for (Edge* e : this->edges) {
 			if (e != E) {
 				std::cout << (long)e << ": ";
-				std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
+				std::cout << vtos(((Node*)W1)->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
 			}
 		}
 		*/
@@ -186,33 +149,36 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 		return std::vector<Edge*>();
 	}
 
-	/*
+	
 	std::cout << "Finishing merge (before preliminary simplify)" << std::endl;
-	for (Edge* e : this->edges) {
-		if (e != E) {
-			std::cout << (long)e << ": ";
-			std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
+	
+	//std::cout << (long)W1 << "---" << (long) W2 << std::endl;
+	
+
+
+	
+	if (n = ((Graph*)W1)->simplify()) {
+		if (!(n->getVertices().empty())) {
+			//std::cout << (long)W1 << std::endl;
+			this->removeVertex(W1);
+			//this->removeVertex(W1);
+			this->vertices.push_back(n);
+			for (Edge* e : W1->getEdges())
+				e->Vswap(W1, n);
+			W1 = n;
 		}
 	}
-	*/
 
-	if (n = ((Graph*)E->getV1())->simplify()) {
-		this->removeVertex(E->getV1());
-		this->vertices.push_back(n);
-		for (Edge* e : E->getV1()->getEdges())
-			e->Vswap(E->getV1(), n);
-		E->Vswap(E->getV1(), n);
-		V1 = n;
+	if (n = ((Graph*)W2)->simplify()) {
+		if (!(n->getVertices().empty())) {
+			this->removeVertex(W2);
+			this->vertices.push_back(n);
+			for (Edge* e : W2->getEdges())
+				e->Vswap(W2, n);
+			W2 = n;
+		}
 	}
 
-	if (n = ((Graph*)E->getV2())->simplify()) {
-		this->removeVertex(E->getV2());
-		this->vertices.push_back(n);
-		for (Edge* e : E->getV2()->getEdges())
-			e->Vswap(E->getV2(), n);
-		E->Vswap(E->getV2(), n);
-		V2 = n;
-	}
 
 	/*
 	std::cout << "merge (after preliminary simplify)" << std::endl;
@@ -231,8 +197,8 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 
 	Node tmp = (*((Node*)V1)) * (*((Node*)V2));
 	Vertex* Vm =(Vertex*) new Node(tmp);
-	E->getV1()->removeEdge(E);
-	E->getV2()->removeEdge(E);
+	W1->removeEdge(E);
+	W2->removeEdge(E);
 	//this->removeinneredge(E);
 	//E->selfdestruct();
 	
@@ -250,55 +216,68 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	}*/
 
 
+	std::vector<Edge*> fresh;
 	for (Edge* e : V1->getEdges()) {
-		if (e->Other(V1)->getVertices().size() <= 1) e->Vswap(V1, Vm);
-		else e->Vswap(V1, NULL);
+		e->Vswap(V1, Vm);
+		if (e->isMinimal())
+			fresh.push_back(e);
 	}
 	for (Edge* e : V2->getEdges()) {
-		if (e->Other(V2)->getVertices().size() <= 1) e->Vswap(V2, Vm);
-		else e->Vswap(V2, NULL);
+		e->Vswap(V2, Vm);
+		if (e->isMinimal())
+			fresh.push_back(e);
 	}
 
 
 	std::cout << "Vm: colors = " << vtos(((Node*)Vm)->getColors()) << " P=" << ((Node*)Vm)->Pn() << " " << ((Node*)Vm)->getEdges().size()<< " outgoing edges " << Vm->getEdges().size() << std::endl;
 		
-	((Graph*)E->getV1())->removeVertex(V1);
-	if (n = ((Graph*)E->getV1())->simplify()) {
-		this->removeVertex(E->getV1());
-		this->vertices.push_back(n);
-		for (Edge* e : E->getV1()->getEdges()) {
-			e->Vswap(E->getV1(), n);
-		}
-	}
-	if (E->getV1()->getVertices().empty()) {
-		vector<Edge*> buf(E->getV1()->getEdges());
-		for (Edge* e : buf) {
-			std::cout << "AAAAAAAAAAA" << std::endl;
-			//this->nullinneredge(e);
-			e->selfdestruct();
-		}
-		this->removeVertex(E->getV1());
-	}
 
-	((Graph*)E->getV2())->removeVertex(V2);
-	if (n = ((Graph*)E->getV2())->simplify()) {
-		this->removeVertex(E->getV2());
-		this->vertices.push_back(n);
-		for (Edge* e : E->getV2()->getEdges()) {
-			e->Vswap(E->getV2(), n);
+	if (!W1->isNode()) {
+		((Graph*)W1)->removeVertex(V1);
+		if (n = ((Graph*)W1)->simplify()) {
+			if (!(n->getVertices().empty())) {
+				this->removeVertex(W1);
+				this->vertices.push_back(n);
+				for (Edge* e : W1->getEdges())
+					e->Vswap(W1, n);
+			}
+		}
+		if (W1->getVertices().empty()) {
+			vector<Edge*> buf(W1->getEdges());
+			for (Edge* e : buf) {
+				std::cout << "AAAAAAAAAAA" << std::endl;
+				//this->nullinneredge(e);
+				e->selfdestruct();
+			}
+			this->removeVertex(W1);
 		}
 	}
-	if (E->getV2()->getVertices().empty()) {
-		vector<Edge*> buf(E->getV2()->getEdges());
-		for (Edge* e : buf) {
-			std::cout << "BBBBBBBBBBBBBBBBB" << std::endl;
-			//this->nullinneredge(e);
-			e->selfdestruct();
-		}
-		this->removeVertex(E->getV2());
-	}
+	else this->removeVertex(W1);
 
-	E->selfdestruct();
+	if (!W2->isNode()) {
+		((Graph*)W2)->removeVertex(V2);
+		if (n = ((Graph*)W2)->simplify()) {
+			if (!(n->getVertices().empty())) {
+				this->removeVertex(W2);
+				this->vertices.push_back(n);
+				for (Edge* e : W2->getEdges())
+					e->Vswap(W2, n);
+			}
+		}
+		if (W2->getVertices().empty()) {
+			vector<Edge*> buf(W2->getEdges());
+			for (Edge* e : buf) {
+				std::cout << "BBBBBBBBBBBBBBBBB" << std::endl;
+				//this->nullinneredge(e);
+				e->selfdestruct();
+			}
+			this->removeVertex(W2);
+		}
+	}
+	else this->removeVertex(W2);
+
+	//E->selfdestruct();
+	//this->removeinneredge(E);
 
 	/*
 	std::cout << "Finishing merge (after merge)" << std::endl;
@@ -312,7 +291,8 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	delete(V1);
 	delete(V2);
 
-	return Vm->getEdges();
+
+	return fresh;
 }
 
 void Graph::mergeAll() {
@@ -363,8 +343,7 @@ void Graph::mergeAll() {
 		fresh.insert(fresh.end(), tmp.begin(), tmp.end());
 		std::cout << "After merge" << std::endl;
 		for (Edge* f : fresh) {
-			std::cout << ((((Node*)f->getV1())->toString() != "[]") ? ((Node*)f->getV1())->toString() : ((Graph*)f->getV1())->toString())
-				<< "---" << ((((Node*)f->getV2())->toString() != "[]") ? ((Node*)f->getV2())->toString() : ((Graph*)f->getV2())->toString()) << std::endl;
+			std::cout << f->toString() << std::endl;
 		}
 	}
 	this->edges = fresh;
@@ -373,15 +352,18 @@ void Graph::mergeAll() {
 
 	std::cout<<"Finishing mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
 	for (Edge* e : this->edges) {
-		std::cout << ( (((Node*)e->getV1())->toString() != "[]" ) ? ((Node*)e->getV1())->toString() : ((Graph*)e->getV1())->toString() )
-		 << "---" << ( (((Node*)e->getV2())->toString() != "[]") ? ((Node*)e->getV2())->toString() : ((Graph*)e->getV2())->toString()) << std::endl;
+		std::cout << e->toString() << std::endl;
 	}
 	this->flag = true;
 }
 
 
 void Graph::expand() {
-	std::cout << this->vertices.size() << " vertices to expand" << std::endl;
+	std::cout << this->vertices.size() << " vertices to expand:" << std::endl;
+	for (Vertex* v : this->vertices) {
+		std::cout << ((((Node*)v)->toString() != "[]") ? ((Node*)v)->toString() : ((Graph*)v)->toString()) << " " << v->getP() << std::endl;
+	}
+	std::wcout << std::endl;
 	std::vector<Vertex*> new_vertices;
 	for (Vertex* v : this->vertices) {
 		new_vertices.push_back(((Node*)v)->convert());
@@ -393,15 +375,14 @@ void Graph::expand() {
 			for (Edge* e : new_vertices.back()->getEdges()) {
 				this->removeinneredge(e);
 				//e->selfdestruct();
-				delete e;
+				//delete e;
 			}
 			new_vertices.pop_back();
 		}
 		//delete v;
 		std::cout << "After expand" << std::endl;
 		for (Edge* e : this->edges) {
-			std::cout << ((((Node*)e->getV1())->toString() != "[]") ? ((Node*)e->getV1())->toString() : ((Graph*)e->getV1())->toString())
-				<< "---" << ((((Node*)e->getV2())->toString() != "[]") ? ((Node*)e->getV2())->toString() : ((Graph*)e->getV2())->toString()) << std::endl;
+			std::cout << e->toString() << std::endl;
 		}
 	}
 	this->vertices = new_vertices;

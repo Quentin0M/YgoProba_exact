@@ -39,7 +39,8 @@ bool Vertex::checkEdge(Edge* e) {
 	if(e)
 		for (Edge* edge : this->attached_edges)
 			if (edge && (edge == e))
-				return true;
+				if((edge->getV1()==this)||(edge->getV2()==this))
+					return true;
 	return false;
 }
 

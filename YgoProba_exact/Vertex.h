@@ -38,6 +38,10 @@ public:
 
 	void setP(long double p) { this->P = p; }
 
+	long double getP() { return this->P; }
+
 	std::string toString();
+
+	bool isNode() { return this->vertices.back() == this; }
 };
 

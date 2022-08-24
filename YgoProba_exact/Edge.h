@@ -1,6 +1,7 @@
 
 #pragma once
 #include "Vertex.h"
+#include <iostream>
 
 class Vertex;
 class Edge
@@ -20,5 +21,6 @@ public:
 	Vertex* getV1() { return this->V1; }
 	Vertex* getV2() { return this->V2; }
 	bool isMinimal();
+	std::string toString();
 };
 

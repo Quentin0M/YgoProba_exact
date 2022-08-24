@@ -142,17 +142,23 @@ Vertex* Node::convert() {
 	for (Edge* e : elist) {
 		std::cout << "[" << vtos(((Node*)e->getV1())->getColors()) << " , " << vtos(((Node*)e->getV2())->getColors()) << "]" << std::endl;
 	}
-	Graph* G = new Graph(vlist, elist, this->getEdges());
+	Graph* G = new Graph(vlist, elist, std::vector<Edge*>());
 	for (Edge* e : this->getEdges()) {
-		e->Vswap(this, G);
-		//std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
+		e->Vswap(this, (Vertex*)G);
+		//e->Vswap((Vertex*)G, (Vertex*)G);
+		std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
 	}
 	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
 	((Graph*)G)->setP(successP);
+	/*
+	for (Edge* e : G->getEdges()) {
+		std::cout << "{{{}}}" << e->toString() << std::endl;
+	}
+	*/
 	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
 	//std::cout << ( * ((Node*)G->getVertices()[0]) == *((Node*)G->getVertices()[0]) )<< std::endl;
 	
-	//std::cout << G->isEmpty() << std::endl;
+	//std::cout <<"@ = " << (long)G << std::endl;
 	return (Vertex*) (G);
 }
 

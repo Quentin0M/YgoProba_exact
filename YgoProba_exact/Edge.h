@@ -9,6 +9,7 @@ class Edge
 private:
 	Vertex* V1=NULL;
 	Vertex* V2=NULL;
+	std::vector<Vertex*> containers;
 	int hash=0;
 
 public:
@@ -22,5 +23,7 @@ public:
 	Vertex* getV2() { return this->V2; }
 	bool isMinimal();
 	std::string toString();
+
+	std::vector<Vertex*> getContainers();
 };
 

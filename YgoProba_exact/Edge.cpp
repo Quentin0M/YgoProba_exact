@@ -40,6 +40,14 @@ void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 	if (!S) throw new S_null_exception;
 	if (!T) throw new T_null_exception;
 	std::cout << "Valid edge" << std::endl;
+	if (S->getVertices().empty()) {
+		std::cout << "Fixed S" << std::endl;
+		S->getVertices().push_back(S);
+	}
+	if (T->getVertices().empty()) {
+		std::cout << "Fixed T" << std::endl;
+		T->getVertices().push_back(T);
+	}
 	std::vector<std::string> Snodes;
 	std::vector<std::string> Tnodes;
 	for (Vertex* v : S->getVertices())
@@ -70,7 +78,10 @@ void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 void Edge::selfdestruct() {
 	if(V1) this->V1->removeEdge(this);
 	if(V2) this->V2->removeEdge(this);
-	delete this;
+	for (Vertex* g : this->containers)
+		((Graph*)g)->removeinneredge(this);
+	std::cout << "Edges " << this << std::endl;
+	//delete &(*this);
 }
 
 bool Edge::isMinimal() {
@@ -82,4 +93,8 @@ std::string Edge::toString() {
 	ss       << ((((Node*)this->getV1())->toString() != "[]") ? ((Node*)this->getV1())->toString() : ((Graph*)this->getV1())->toString())
 	<< "---" << ((((Node*)this->getV2())->toString() != "[]") ? ((Node*)this->getV2())->toString() : ((Graph*)this->getV2())->toString());
 	return ss.str();
+}
+
+std::vector<Vertex*> Edge::getContainers() {
+	return this->containers;
 }

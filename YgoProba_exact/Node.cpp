@@ -99,7 +99,7 @@ Node Node::operator*(const Node& n) {
 Vertex* Node::convert() {
 	std::cout << "###################################################################" << std::endl;
 	std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
-	std::cout << "Node " << this->toString() << std::endl;
+	std::cout << "Node " << this->toString() << " " << this << std::endl;
 	std::cout << "Total P of the node = " << this->P << std::endl;
 	std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
 	std::vector<Vertex*> vlist;
@@ -110,24 +110,27 @@ Vertex* Node::convert() {
 
 	for (int i = -1; i < (int)this->colors.size(); i++) {
 		std::cout << "Drawing " << i << std::endl;
-		//tmp = new Node(*this);
-		vlist.push_back(new Node(*this));
+		Vertex* tmp = new Node(*this);
+		vlist.push_back(tmp);
 		vlist[vlist.size() - 1]->wipeEdges();
 		((Node*)vlist.back())->draw(i);
 		//Removing all nodes whose P=0 or nodes that can't be a success
 		if (((Node*)vlist.back())->isdeadend()) {
 			std::cout << "Dead end" << std::endl;
 			vlist.pop_back();
+			delete tmp;
 		}
 		else if (!((Node*)vlist.back())->Pn()) {
 			std::cout << "Node with P = 0" << std::endl;
 			vlist.pop_back();
+			delete tmp;
 		}
 		//Removing nodes which are already successes and getting their probabilities
 		else if (((Node*)vlist.back())->isSuccess()) {
 			std::cout << "Success with P = " << ((Node*)vlist.back())->Pn() << std::endl;
 			successP += ((Node*)vlist.back())->Pn();
 			vlist.pop_back();
+			delete tmp;
 		}
 	}
 	std::cout << "Finished drawing" << endl;

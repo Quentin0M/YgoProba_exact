@@ -172,16 +172,16 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	//std::cout << (long)W1 << "---" << (long) W2 << std::endl;
 	
 
-	for (Vertex* v : outer) {
-		if (n = ((Graph*)v)->simplify()) {
+	for (int i = 0; i < outer.size();i++) {
+		if (n = ((Graph*)outer[i])->simplify()) {
 			if (!(n->getVertices().empty())) {
 				//std::cout << (long)W1 << std::endl;
-				this->removeVertex(v);
+				this->removeVertex(outer[i]);
 				//this->removeVertex(W1);
 				this->vertices.push_back(n);
-				for (Edge* e : v->getEdges())
-					e->Vswap(v, n);
-				v = n;
+				for (Edge* e : outer[i]->getEdges())
+					e->Vswap(outer[i], n);
+				outer[i] = n;
 			}
 		}
 	}
@@ -221,8 +221,10 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 
 	std::cout << "found nodes " << std::endl;
 
-	std::cout << "V1: colors = " << vtos(((Node*)V1)->getColors()) << " P=" << ((Node*)V1)->Pn() << std::endl;
-	std::cout << "V2: colors = " << vtos(((Node*)V2)->getColors()) << " P=" << ((Node*)V2)->Pn() << std::endl;
+	for(int i = 0 ; i<inner.size() ; i++)
+		std::cout << "V"<<i<<": colors = " << vtos(((Node*)inner[i])->getColors()) << " P=" << ((Node*)inner[i])->Pn() << " @=" << inner[i] << " containing node=" << outer[i] << std::endl;
+	//std::cout << "V1: colors = " << vtos(((Node*)V1)->getColors()) << " P=" << ((Node*)V1)->Pn() << std::endl;
+	//std::cout << "V2: colors = " << vtos(((Node*)V2)->getColors()) << " P=" << ((Node*)V2)->Pn() << std::endl;
 
 	//Node tmp = (*((Node*)V1)) * (*((Node*)V2));
 	Node* tmp = NULL;
@@ -234,7 +236,10 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 			tmp = new Node((*tmp) * (*((Node*)v)));
 	}
 
+	//tmp can't equal NULL so it's ok
 	Vertex* Vm = new Node(*tmp);
+
+
 	//W1->removeEdge(E);
 	//W2->removeEdge(E);
 	//this->removeinneredge(E);
@@ -262,11 +267,11 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 			if (!this->checkEdge(e)) {
 				if (e->isMinimal())
 					fresh.push_back(e);
-				else {
+				/*else {
 					this->edges.push_back(e);
 					e->getContainers().push_back(this);
 					std::cout << "Added " << e->toString() << std::endl;
-				}
+				}*/
 			}
 		}
 		//delete v;
@@ -653,10 +658,15 @@ void Graph::tryCycle(std::vector<Vertex*,std::allocator<Vertex*>>* outer, std::v
 			outer->push_back(e->Other(outer->back()));
 			this->removeinneredge(e);
 			e->selfdestruct();
-			Edge* closer = NULL;
+			/*Edge* closer = NULL;
 			if (closer = this->tryGetEdge(e->Other(outer->back()), outer->front())) {
 				this->removeinneredge(closer);
 				closer->selfdestruct();
+				break;
+			}*/
+			if (inner->front() == inner->back()) {
+				inner->pop_back();
+				outer->pop_back();
 				break;
 			}
 			else {

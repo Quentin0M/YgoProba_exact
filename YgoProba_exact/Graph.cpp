@@ -504,3 +504,77 @@ std::string Graph::toString() {
 	ss << "]";
 	return ss.str();
 }
+
+Edge* Graph::tryGetEdge(Vertex* g, Vertex* n) {
+	for (Edge* e : g->getEdges()) {
+		if (e->Other(g) == n) {
+			return e;
+		}
+	}
+	return NULL;
+}
+
+
+//Should probably make it a void and modify a given vector directly
+//
+std::vector<Vertex*> Graph::tryCycle(Vertex* V1, Node* N1, Vertex* V2, Node* N2) {
+	Vertex* v1 = NULL;
+	Vertex* v2 = NULL;
+
+	std::vector<Vertex*> res;
+
+	for (Edge* e : V1->getEdges()) {
+		e->getEquivalentNodes(&v1, &v2);
+		if (v1 == N1) {
+			this->removeinneredge(e);
+			this->removeinneredge(this->tryGetEdge(e->Other(V1), V2));
+			res.push_back(v2);
+			return res;
+		}
+		if (v2 == N1) {
+			this->removeinneredge(e);
+			this->removeinneredge(this->tryGetEdge(e->Other(V1), V2));
+			res.push_back(v1);
+			return res;
+		}
+	}
+	return res;
+}
+
+// Should be a better version of the tryCycle version
+// Idk why I added this recursive bs to try n fix my awful code
+void Graph::tryCycle(std::vector<Vertex*,std::allocator<Vertex*>>* outer, std::vector<Vertex*, std::allocator<Vertex*>>* inner) {
+	Vertex* v1 = NULL;
+	Vertex* v2 = NULL;
+	std::vector<Edge*> elist(outer->back()->getEdges());
+	for (Edge* e : elist) {
+		e->getEquivalentNodes(&v1, &v2);
+		if (v1) {
+			if (v1 == inner->back()) {
+				inner->push_back(v2);
+			}
+			else if (v2 == inner->back()) {
+				inner->push_back(v1);
+			}
+			else {
+				v1 = NULL;
+				v2 = NULL;
+				continue;
+			}
+			outer->push_back(e->Other(outer->back()));
+			e->selfdestruct();
+			Edge* closer = NULL;
+			if (closer = this->tryGetEdge(e->Other(outer->back()), outer->front())) {
+				closer->selfdestruct();
+				break;
+			}
+			else {
+				this->tryCycle(outer, inner);
+				break;
+			}
+		}
+		else {
+			e->selfdestruct();
+		}
+	}
+}

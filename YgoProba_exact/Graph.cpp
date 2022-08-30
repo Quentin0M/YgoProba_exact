@@ -113,7 +113,7 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	E->selfdestruct();
 	//delete E;
 	//std::cout << "Destroyed E" << std::endl;
-	if (!V1) {
+	if (!V1 || (V1 == V2)) {
 
 		//W1->removeEdge(E);
 		//W2->removeEdge(E);
@@ -264,14 +264,14 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	for (Vertex* v : inner) {
 		for (Edge* e : v->getEdges()) {
 			e->Vswap(v, Vm);
-			if (!this->checkEdge(e)) {
+			if (!this->checkInnerEdge(e)) {
 				if (e->isMinimal())
 					fresh.push_back(e);
-				/*else {
+				else {
 					this->edges.push_back(e);
 					e->getContainers().push_back(this);
 					std::cout << "Added " << e->toString() << std::endl;
-				}*/
+				}
 			}
 		}
 		//delete v;
@@ -458,7 +458,7 @@ void Graph::mergeAll() {
 		if (tmp.empty()) {
 			std::cout<<"No edges to insert"<<std::endl;
 			for (Edge* f : this->edges) {
-				std::cout << f->toString() << std::endl;
+				std::cout << f->toString() << " @ = " << f << std::endl;
 			}
 			continue;
 		}
@@ -487,7 +487,7 @@ void Graph::mergeAll() {
 		}
 		std::cout << std::endl;
 		for (Edge* f : this->edges) {
-			std::cout << f->toString() << std::endl;
+			std::cout << f->toString() << " @ = " << f << std::endl;
 		}
 	}
 	this->edges = fresh;
@@ -679,4 +679,13 @@ void Graph::tryCycle(std::vector<Vertex*,std::allocator<Vertex*>>* outer, std::v
 			//e->selfdestruct();
 		}
 	}
+}
+
+
+bool Graph::checkInnerEdge(Edge* e) {
+	if (e)
+		for (Edge* edge : this->edges)
+			if (edge && (edge == e))
+				return true;
+	return false;
 }

@@ -42,6 +42,7 @@ public:
 
 	bool isEmpty() { return vertices.empty(); }
 	bool checkEdge(Edge*e);
+	bool checkInnerEdge(Edge*);
 
 	std::string typeCheck() { return "Graph"; }
 

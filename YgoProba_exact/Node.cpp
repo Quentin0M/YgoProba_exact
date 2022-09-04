@@ -97,18 +97,18 @@ Node Node::operator*(const Node& n) {
 
 
 Vertex* Node::convert() {
-	std::cout << "###################################################################" << std::endl;
-	std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
-	std::cout << "Node " << this->toString() << " " << this << std::endl;
-	std::cout << "Total P of the node = " << this->P << std::endl;
-	std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
-	for (Edge* e : this->getEdges()) {
-		std::cout << e->toString() << std::endl;
-	}
-	std::cout << std::endl;
+	//--std::cout << "###################################################################" << std::endl;
+	//--std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
+	//--std::cout << "Node " << this->toString() << " " << this << std::endl;
+	//--std::cout << "Total P of the node = " << this->P << std::endl;
+	//--std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
+	//--for (Edge* e : this->getEdges()) {
+	//--	std::cout << e->toString() << std::endl;
+	//--}
+	//--std::cout << std::endl;
 	std::vector<Vertex*> vlist;
 	std::vector<Edge*> elist;
-	//Node* tmp;
+
 	long double successP = 0.L;
 	//--std::cout << "check" << std::endl;
 
@@ -137,7 +137,7 @@ Vertex* Node::convert() {
 			delete tmp;
 		}
 	}
-	std::cout << "Finished drawing" << endl;
+	//--std::cout << "Finished drawing" << endl;
 	for (int i = 0; i < ((int)vlist.size())-1; i++) {
 		for (int j = i + 1; j < vlist.size(); j++) {
 			elist.push_back(new Edge(vlist[i], vlist[j], this->hash));
@@ -152,20 +152,12 @@ Vertex* Node::convert() {
 	Graph* G = new Graph(vlist, elist, std::vector<Edge*>());
 	for (Edge* e : this->getEdges()) {
 		e->Vswap(this, (Vertex*)G);
-		//e->Vswap((Vertex*)G, (Vertex*)G);
+
 		//--std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
 	}
-	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
+
 	((Graph*)G)->setP(successP);
-	/*
-	for (Edge* e : G->getEdges()) {
-		std::cout << "{{{}}}" << e->toString() << std::endl;
-	}
-	*/
-	//std::cout << vtos(((Node*)G)->getColors()) << std::endl;
-	//std::cout << ( * ((Node*)G->getVertices()[0]) == *((Node*)G->getVertices()[0]) )<< std::endl;
-	
-	//std::cout <<"@ = " << (long)G << std::endl;
+
 	return (Vertex*) (G);
 }
 
@@ -180,7 +172,7 @@ bool Node::isdeadend() {
 	for (int i = 0; i < this->obj.size(); i++) {
 		tmp.push_back(this->obj[i] - this->colors[i]);
 	}
-	// std::transform(this->obj.begin(), this->obj.end(), this->colors.begin(), tmp, std::minus<int>());
+
 	int sum = 0;
 	// if an element is there more time than needed, it shouldn't make me want less of the others
 	for (int e : tmp) sum += (e < 0 ? 0 : e); 

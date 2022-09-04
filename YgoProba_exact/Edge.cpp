@@ -24,7 +24,7 @@ void Edge::Vswap(Vertex* A, Vertex* B) {
 	else if (this->V2 == A)
 		this->V2 = B;
 	else {
-		std::cout << (long)this->getV1() << "+++" << (long)this->getV2() << " No valid target for " << (long)A << " " << this->toString() << std::endl;
+		//--std::cout << (long)this->getV1() << "+++" << (long)this->getV2() << " No valid target for " << (long)A << " " << this->toString() << std::endl;
 		//--throw(new std::exception);
 	}
 	if(A) A->removeEdge(this);
@@ -40,29 +40,29 @@ Vertex* Edge::Other(Vertex* v) {
 void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 	Vertex* S = this->V1;
 	Vertex* T = this->V2;
-	std::cout << "Entering GEN" << std::endl;
+	//--std::cout << "Entering GEN" << std::endl;
 	if (!S && !T) throw new SnT_null_exception;
 	if (!S) throw new S_null_exception;
 	if (!T) throw new T_null_exception;
-	std::cout << "Valid edge" << std::endl;
+	//--std::cout << "Valid edge" << std::endl;
 	if (S->getVertices().empty()) {
-		std::cout << "Fixed S" << std::endl;
+		//--std::cout << "Fixed S" << std::endl;
 		S->getVertices().push_back(S);
 	}
 	if (T->getVertices().empty()) {
-		std::cout << "Fixed T" << std::endl;
+		//--std::cout << "Fixed T" << std::endl;
 		T->getVertices().push_back(T);
 	}
-	std::vector<std::string> Snodes;
-	std::vector<std::string> Tnodes;
-	for (Vertex* v : S->getVertices())
-		Snodes.push_back(vtos(((Node*)v)->getColors()));
-	for (Vertex* v : T->getVertices())
-		Tnodes.push_back(vtos(((Node*)v)->getColors()));
-	std::cout << "S has " << S->getVertices().size() << std::endl;
-	std::cout << " " << vtos(Snodes) << std::endl;
-	std::cout << "T has " << T->getVertices().size() << std::endl;
-	std::cout << " " << vtos(Tnodes)<<std::endl;
+	//--std::vector<std::string> Snodes;
+	//--std::vector<std::string> Tnodes;
+	//--for (Vertex* v : S->getVertices())
+	//--	Snodes.push_back(vtos(((Node*)v)->getColors()));
+	//--for (Vertex* v : T->getVertices())
+	//--	Tnodes.push_back(vtos(((Node*)v)->getColors()));
+	//--std::cout << "S has " << S->getVertices().size() << std::endl;
+	//--std::cout << " " << vtos(Snodes) << std::endl;
+	//--std::cout << "T has " << T->getVertices().size() << std::endl;
+	//--std::cout << " " << vtos(Tnodes)<<std::endl;
 	//std::cout << "Successfully casted v1 and v2 into graphs" << std::endl;
 	for (Vertex* v : S->getVertices() ) {
 		Node* vn = (Node*)v;
@@ -71,7 +71,7 @@ void Edge::getEquivalentNodes(Vertex** v1, Vertex** v2) {
 			Node* wn = (Node*)w;
 			if (!w) continue;
 			if (vn->getColors() == wn->getColors()) {
-				std::cout << "HERE!!!" << std::endl;
+				//--std::cout << "HERE!!!" << std::endl;
 				*v1 = v;
 				*v2 = w;
 				return;
@@ -85,8 +85,8 @@ void Edge::selfdestruct() {
 	if(V2) this->V2->removeEdge(this);
 	for (Vertex* g : this->containers)
 		((Graph*)g)->removeinneredge(this);
-	std::cout << "Edges " << this << std::endl;
-	//delete &(*this);
+	//--std::cout << "Edges " << this << std::endl;
+	//--//delete &(*this);
 }
 
 bool Edge::isMinimal() {

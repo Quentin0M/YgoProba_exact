@@ -18,7 +18,7 @@ void Vertex::wipeEdges() { this->attached_edges.clear(); }
 
 
 std::vector<Vertex*> Vertex::getVertices() {
-	//std::cout << "Problem" << std::endl;
+	//--//std::cout << "Problem" << std::endl;
 	return this->vertices; 
 }
 

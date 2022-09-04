@@ -61,8 +61,12 @@ public:
 	// N1 is part of V1 and N2 is part of V2
 	// Returns an empty vector if no cycle (bigger than 2) is found
 	//std::vector<Vertex*> tryCycle(Vertex* V1, Node* N1, Vertex* V2, Node* N2);
-
+	//!!!!!!!!!!!!!!BAD: ONLY FINDS 3-CYCLES WHEN WHAT WE HAVE IS N-CLIQUES
 	void tryCycle(std::vector<Vertex*, std::allocator<Vertex*>>* outer, std::vector<Vertex*, std::allocator<Vertex*>>* inner);
+
+	//Replaces TryCycle. Basically does the same but looking for cliques
+	void tryClique(std::vector<Vertex*, std::allocator<Vertex*>>* outer, std::vector<Vertex*, std::allocator<Vertex*>>* inner);
+	void cleanClique(Vertex*, std::vector<Vertex*, std::allocator<Vertex*>>);
 
 };
 

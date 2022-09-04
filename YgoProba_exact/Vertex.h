@@ -43,5 +43,7 @@ public:
 	std::string toString();
 
 	bool isNode() { return this->vertices.back() == this; }
+
+	Edge* eSearch(Vertex*);
 };
 

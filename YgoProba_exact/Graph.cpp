@@ -78,6 +78,10 @@ void Graph::simplifyAll(std::vector<Vertex*> old) {
 	
 }
 
+
+/***************************************************
+* Try and merge 2 or more nodes
+*/
 std::vector<Edge*> Graph::merge(Edge* E) {
 	Vertex* V1=NULL;
 	Vertex* V2=NULL;
@@ -154,7 +158,7 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 		return std::vector<Edge*>();
 	}
 
-	std::cout << "looking for a cycle" << std::endl;
+	std::cout << "looking for a clique" << std::endl;
 
 	std::vector<Vertex*> outer, inner;
 	outer.push_back(W1);
@@ -163,9 +167,9 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 	inner.push_back(V1);
 	inner.push_back(V2);
 
-	this->tryCycle(&outer, &inner);
+	this->tryClique(&outer, &inner);
 
-	std::cout << "Size of the cycle: " << outer.size() << std::endl;
+	std::cout << "Size of the clique: " << outer.size() << std::endl;
 
 	std::cout << "Finishing merge (before preliminary simplify)" << std::endl;
 	
@@ -182,6 +186,7 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 				for (Edge* e : outer[i]->getEdges())
 					e->Vswap(outer[i], n);
 				outer[i] = n;
+				std::cout << ((Node*)outer[i])->toString() << std::endl;
 			}
 		}
 	}
@@ -267,11 +272,13 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 			if (!this->checkInnerEdge(e)) {
 				if (e->isMinimal())
 					fresh.push_back(e);
+				
 				else {
 					this->edges.push_back(e);
 					e->getContainers().push_back(this);
 					std::cout << "Added " << e->toString() << std::endl;
 				}
+				
 			}
 		}
 		//delete v;
@@ -318,6 +325,7 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 					this->vertices.push_back(n);
 					for (Edge* e : v->getEdges()) {
 						if (*((Node*)(e->Other(v))) == *((Node*)Vm)) {
+							std::cout << "NO" << std::endl;
 							e->Vswap(v, Vm);
 						}
 						else e->Vswap(v, n);
@@ -334,7 +342,7 @@ std::vector<Edge*> Graph::merge(Edge* E) {
 				this->removeVertex(v);
 			}
 			std::cout << "After simplify: ";
-			std::cout << ((((Node*)v)->toString() != "[]") ? ((Node*)v)->toString() : ((Graph*)v)->toString()) << " " << v->getVertices().empty() << std::endl;
+			std::cout << ((((Node*)this->vertices.back())->toString() != "[]") ? ((Node*)this->vertices.back())->toString() : ((Graph*)this->vertices.back())->toString()) << " " << this->vertices.back()->getVertices().empty() << std::endl;
 		}
 		else {
 			this->removeVertex(v);
@@ -489,6 +497,11 @@ void Graph::mergeAll() {
 		for (Edge* f : this->edges) {
 			std::cout << f->toString() << " @ = " << f << std::endl;
 		}
+		std::cout << std::endl;
+		for (Vertex* v : this->vertices) {
+			std::cout << ((((Node*)v)->toString() != "[]") ? ((Node*)v)->toString() : ((Graph*)v)->toString()) << std::endl;
+		}
+
 	}
 	this->edges = fresh;
 	for (Edge* e : this->edges)
@@ -496,49 +509,50 @@ void Graph::mergeAll() {
 
 	
 
-	std::cout<<"Finishing mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
-	for (Edge* e : this->edges) {
-		std::cout << e->toString() << std::endl;
-	}
-	this->flag = true;
+	//--std::cout<<"Finishing mergeAll with " << this->vertices.size() << " vertices and " << this->edges.size() << " edges" << std::endl;
+	//--for (Edge* e : this->edges) {
+	//--	std::cout << e->toString() << std::endl;
+	//--}
+	//--this->flag = true;
 }
 
 
 void Graph::expand() {
-	std::cout << this->vertices.size() << " vertices to expand:" << std::endl;
-	for (Vertex* v : this->vertices) {
-		std::cout << ((((Node*)v)->toString() != "[]") ? ((Node*)v)->toString() : ((Graph*)v)->toString()) << " " << v->getP() << " " << v << std::endl;
-	}
-	std::wcout << std::endl;
+	//--std::cout << this->vertices.size() << " vertices to expand:" << std::endl;
+	//--for (Vertex* v : this->vertices) {
+	//--	std::cout << ((((Node*)v)->toString() != "[]") ? ((Node*)v)->toString() : ((Graph*)v)->toString()) << " " << v->getP() << " " << v << std::endl;
+	//--}
+	//--std::wcout << std::endl;
 	std::vector<Vertex*> new_vertices;
 	for (Vertex* v : this->vertices) {
 		new_vertices.push_back(((Node*)v)->convert());
 		this->P += ((Graph*)new_vertices.back())->getP();
 		if (((Graph*)new_vertices.back())->isEmpty()) {
-			std::cout << "empty graph" << std::endl;
-			//delete new_vertices.back();
+			//--std::cout << "empty graph" << std::endl;
+			//--delete new_vertices.back();
 			
 			for (Edge* e : new_vertices.back()->getEdges()) {
-				//e->selfdestruct();
 				this->removeinneredge(e);
-				//delete e;
+				e->selfdestruct();
+				//--delete e;
 			}
-			//delete new_vertices.back();
+			delete new_vertices.back();
 			new_vertices.pop_back();
 		}
-		//delete v;
-		std::cout << "After expand" << std::endl;
-		for (Edge* e : this->edges) {
-			std::cout << e->toString() << std::endl;
-		}
+		//--delete v;
+		//--std::cout << "After expand" << std::endl;
+		//--for (Edge* e : this->edges) {
+		//--	std::cout << e->toString() << std::endl;
+		//--}
 	}
 	this->vertices = new_vertices;
-	std::cout << "End of expansion" << std::endl;
+	//--std::cout << "End of expansion" << std::endl;
 
-	std::cout << "Before mergeAll" << std::endl;
-	for (Edge* e : this->edges) {
-		std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
-	}
+	//--std::cout << "Before mergeAll" << std::endl;
+	//--for (Edge* e : this->edges) {
+		//--std::cout << vtos(((Node*)e->getV1())->getColors()) << "---" << vtos(((Node*)e->getV2())->getColors()) << std::endl;
+	//--	std::cout << e->toString() << std::endl;
+	//--}
 	//std::vector<Vertex*> old(this->vertices);
 	this->mergeAll();
 	this->simplifyAll();
@@ -554,7 +568,7 @@ bool Graph::checkEdge(Edge* e) {
 void Graph::removeinneredge(Edge* edge) {
 	for (int i = 0; i < this->edges.size(); i++) {
 		if (this->edges[i] == edge) {
-			std::cout << "found" << std::endl;
+			//--std::cout << "found" << std::endl;
 			this->edges.erase(this->edges.begin() + i);
 			return;
 		}
@@ -598,6 +612,10 @@ std::string Graph::toString() {
 	return ss.str();
 }
 
+
+/**************
+* Tries to find an edge linking g to n
+*/
 Edge* Graph::tryGetEdge(Vertex* g, Vertex* n) {
 	for (Edge* e : g->getEdges()) {
 		if (e->Other(g) == n) {
@@ -608,80 +626,76 @@ Edge* Graph::tryGetEdge(Vertex* g, Vertex* n) {
 }
 
 
-//Should probably make it a void and modify a given vector directly
-/***
-std::vector<Vertex*> Graph::tryCycle(Vertex* V1, Node* N1, Vertex* V2, Node* N2) {
-	Vertex* v1 = NULL;
-	Vertex* v2 = NULL;
 
-	std::vector<Vertex*> res;
 
-	for (Edge* e : V1->getEdges()) {
-		e->getEquivalentNodes(&v1, &v2);
-		if (v1 == N1) {
-			this->removeinneredge(e);
-			this->removeinneredge(this->tryGetEdge(e->Other(V1), V2));
-			res.push_back(v2);
-			return res;
-		}
-		if (v2 == N1) {
-			this->removeinneredge(e);
-			this->removeinneredge(this->tryGetEdge(e->Other(V1), V2));
-			res.push_back(v1);
-			return res;
-		}
-	}
-	return res;
-}
-****/
-
-// Should be a better version of the tryCycle version
-// Idk why I added this recursive bs to try n fix my awful code
-void Graph::tryCycle(std::vector<Vertex*,std::allocator<Vertex*>>* outer, std::vector<Vertex*, std::allocator<Vertex*>>* inner) {
+/**********************************
+* Tries and find a clique of nodes with the same result so that they can be merged together
+**************************************/
+void Graph::tryClique(std::vector<Vertex*, std::allocator<Vertex*>>* outer, std::vector<Vertex*, std::allocator<Vertex*>>* inner) {
 	Vertex* v1 = NULL;
 	Vertex* v2 = NULL;
 	std::vector<Edge*> elist(outer->back()->getEdges());
+	std::vector<Vertex*> outerbuf, innerbuf;
 	for (Edge* e : elist) {
 		e->getEquivalentNodes(&v1, &v2);
 		if (v1) {
-			if (v1 == inner->back()) {
-				inner->push_back(v2);
+			if ((v1 == inner->back()) && (v2!=inner->front())){
+				innerbuf.push_back(v2);
+				outerbuf.push_back(e->Other(outer->back()));
+				this->removeinneredge(e);
+				e->selfdestruct();
+				v1 = NULL;
+				v2 = NULL;
 			}
-			else if (v2 == inner->back()) {
-				inner->push_back(v1);
+			else if ((v2 == inner->back()) && (v1 != inner->front())) {
+				innerbuf.push_back(v1);
+				outerbuf.push_back(e->Other(outer->back()));
+				this->removeinneredge(e);
+				e->selfdestruct();
+				v1 = NULL;
+				v2 = NULL;
 			}
 			else {
 				v1 = NULL;
 				v2 = NULL;
 				continue;
 			}
-			outer->push_back(e->Other(outer->back()));
+		}
+		/*
+		else {
 			this->removeinneredge(e);
 			e->selfdestruct();
-			/*Edge* closer = NULL;
-			if (closer = this->tryGetEdge(e->Other(outer->back()), outer->front())) {
-				this->removeinneredge(closer);
-				closer->selfdestruct();
-				break;
-			}*/
-			if (inner->front() == inner->back()) {
-				inner->pop_back();
-				outer->pop_back();
-				break;
-			}
-			else {
-				this->tryCycle(outer, inner);
-				break;
-			}
 		}
-		else {
-			//this->removeinneredge(e);
-			//e->selfdestruct();
+		*/
+	}
+	outer->insert(outer->end(), outerbuf.begin(), outerbuf.end());
+	inner->insert(inner->end(), innerbuf.begin(), innerbuf.end());
+	this->cleanClique(outer->front(), outerbuf);
+}
+
+
+/*************************************************
+* Removes all Edges from a clique
+*/
+void Graph::cleanClique(Vertex* V, std::vector<Vertex*, std::allocator<Vertex*>> vlist) {
+	for(Vertex* v: vlist){
+		if (Edge* e = V->eSearch(v)) {
+			this->removeinneredge(e);
+			e->selfdestruct();
 		}
+	}
+	if (vlist.size() > 1) {
+		Vertex* next = vlist.back();
+		vlist.pop_back();
+		this->cleanClique(next, vlist);
 	}
 }
 
 
+
+/****************************************************************
+* Checks if an inner edge exists, given an address
+*/
 bool Graph::checkInnerEdge(Edge* e) {
 	if (e)
 		for (Edge* edge : this->edges)

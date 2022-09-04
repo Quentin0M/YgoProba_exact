@@ -18,13 +18,18 @@ Edge::Edge(Vertex* V1, Vertex* V2, const int& h) {
 
 void Edge::Vswap(Vertex* A, Vertex* B) {
 	//(this->V1 == A ? this->V1 : this->V2) = B;
+	//--std::cout << "Before swap: " << this->toString() << std::endl;
 	if (this->V1 == A)
 		this->V1 = B;
 	else if (this->V2 == A)
 		this->V2 = B;
-	else std::cout << (long)this->getV1() << "+++" << (long)this->getV2() << " No valid target for " << (long)A << " " << this->toString() << std::endl;
+	else {
+		std::cout << (long)this->getV1() << "+++" << (long)this->getV2() << " No valid target for " << (long)A << " " << this->toString() << std::endl;
+		//--throw(new std::exception);
+	}
 	if(A) A->removeEdge(this);
 	if(B) B->addEdge(this);
+	//--std::cout << "After swap:" << this->toString() << std::endl;
 }
 
 Vertex* Edge::Other(Vertex* v) {

@@ -56,3 +56,11 @@ std::string Vertex::toString() {
 	ss << "]";
 	return ss.str();
 }
+
+Edge* Vertex::eSearch(Vertex* v) {
+	for (Edge* e : this->attached_edges) {
+		if (e->Other(this) == v)
+			return e;
+	}
+	return NULL;
+}

@@ -81,9 +81,7 @@ long double Solver::buildnsolve() {
 
 long double Solver::solve() {
 	while (!G->isEmpty()) {
-		//--std::cout << "hello" << std::endl;
-		//--std::cout << "============================================\n";
-		G->expand();
+						G->expand();
 	}
 	return G->getP();
 }

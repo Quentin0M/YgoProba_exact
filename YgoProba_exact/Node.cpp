@@ -72,10 +72,8 @@ std::vector<Edge*> Node::getEdges() {
 
 void Node::draw(int color) {
 	if (color == -1) {
-		//--std::cout << this->P << " * (" << this->N << " - " << this->sumw << ") / " << this->N << " = ";
-		this->P *= ((long double)(this->N - this->sumw)) / ((long double)this->N);
-		//--std::cout << this->P << std::endl;
-	}
+				this->P *= ((long double)(this->N - this->sumw)) / ((long double)this->N);
+			}
 	else {
 		this->P *= ((long double)this->weights[color]) / ((long double)this->N);
 		this->weights[color]--;
@@ -97,64 +95,44 @@ Node Node::operator*(const Node& n) {
 
 
 Vertex* Node::convert() {
-	//--std::cout << "###################################################################" << std::endl;
-	//--std::cout << "Entering convert() with " << this->colors.size() + 1 << " colors to draw" << std::endl;
-	//--std::cout << "Node " << this->toString() << " " << this << std::endl;
-	//--std::cout << "Total P of the node = " << this->P << std::endl;
-	//--std::cout << "This node has " << this->getEdges().size() << " outgoing edges" << std::endl;
-	//--for (Edge* e : this->getEdges()) {
-	//--	std::cout << e->toString() << std::endl;
-	//--}
-	//--std::cout << std::endl;
-	std::vector<Vertex*> vlist;
+										std::vector<Vertex*> vlist;
 	std::vector<Edge*> elist;
 
 	long double successP = 0.L;
-	//--std::cout << "check" << std::endl;
-
+	
 	for (int i = -1; i < (int)this->colors.size(); i++) {
-		//--std::cout << "Drawing " << i << std::endl;
-		Vertex* tmp = new Node(*this);
+				Vertex* tmp = new Node(*this);
 		vlist.push_back(tmp);
 		vlist[vlist.size() - 1]->wipeEdges();
 		((Node*)vlist.back())->draw(i);
 		//Removing all nodes whose P=0 or nodes that can't be a success
 		if (((Node*)vlist.back())->isdeadend()) {
-			//--std::cout << "Dead end" << std::endl;
-			vlist.pop_back();
+						vlist.pop_back();
 			delete tmp;
 		}
 		else if (!((Node*)vlist.back())->Pn()) {
-			//--std::cout << "Node with P = 0" << std::endl;
-			vlist.pop_back();
+						vlist.pop_back();
 			delete tmp;
 		}
 		//Removing nodes which are already successes and getting their probabilities
 		else if (((Node*)vlist.back())->isSuccess()) {
-			//--std::cout << "Success with P = " << ((Node*)vlist.back())->Pn() << std::endl;
-			successP += ((Node*)vlist.back())->Pn();
+						successP += ((Node*)vlist.back())->Pn();
 			vlist.pop_back();
 			delete tmp;
 		}
 	}
-	//--std::cout << "Finished drawing" << endl;
-	for (int i = 0; i < ((int)vlist.size())-1; i++) {
+		for (int i = 0; i < ((int)vlist.size())-1; i++) {
 		for (int j = i + 1; j < vlist.size(); j++) {
 			elist.push_back(new Edge(vlist[i], vlist[j], this->hash));
 			vlist[i]->addEdge(elist.back());
 			vlist[j]->addEdge(elist.back());
 		}
 	}
-	//--std::cout << "edges created: " << std::endl;
-	//--for (Edge* e : elist) {
-	//--	std::cout << "[" << vtos(((Node*)e->getV1())->getColors()) << " , " << vtos(((Node*)e->getV2())->getColors()) << "]" << std::endl;
-	//--}
-	Graph* G = new Graph(vlist, elist, std::vector<Edge*>());
+					Graph* G = new Graph(vlist, elist, std::vector<Edge*>());
 	for (Edge* e : this->getEdges()) {
 		e->Vswap(this, (Vertex*)G);
 
-		//--std::cout << "The edge " << (G->checkEdge(e) ? "has" : "hasn't") << " been added to G" << std::endl;
-	}
+			}
 
 	((Graph*)G)->setP(successP);
 

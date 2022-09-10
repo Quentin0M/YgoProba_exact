@@ -58,3 +58,27 @@ Color Color::operator-(const Color& c) {
 	res.cardinal -= c.cardinal;
 	return res;
 }
+
+bool operator==(const Color& c1, const Color& c2) {
+	return (c1.cardinal == c2.cardinal) && (c1.kind == c2.kind);
+}
+
+bool operator!=(const Color& c1, const Color& c2) {
+	return (c1.cardinal != c2.cardinal) || (c1.kind != c2.kind);
+}
+
+bool operator<(const Color& c1, const Color& c2) {
+	return (c1.cardinal < c2.cardinal);
+}
+
+bool operator>(const Color& c1, const Color& c2) {
+	return (c1.cardinal > c2.cardinal);
+}
+
+bool operator<=(const Color& c1, const Color& c2) {
+	return (c1.cardinal <= c2.cardinal);
+}
+
+bool operator>=(const Color& c1, const Color& c2) {
+	return (c1.cardinal >= c2.cardinal);
+}

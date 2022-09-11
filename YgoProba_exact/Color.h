@@ -14,7 +14,7 @@ class Color
 {
 private:
 	int cardinal;
-	Kind kind;
+	Kind k;
 
 public:
 
@@ -27,6 +27,7 @@ public:
 
 	/// GETTERS / SETTERS
 
+	Kind kind();
 
 	/// OPERATOR OVERRIDES
 

@@ -131,6 +131,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Hand.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="util.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="Edge.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="Hand.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Solver.h" />

@@ -3,13 +3,20 @@
 
 Color::Color(int n, Kind k) {
 	this->cardinal = n;
-	this->kind = k;
+	this->k = k;
 }
 
 Color::Color(const Color& c) {
 	this->cardinal = c.cardinal;
-	this->kind = c.kind;
+	this->k = c.k;
 }
+
+
+
+Kind Color::kind() {
+	return this->k;
+}
+
 
 
 Color& Color::operator++() {
@@ -60,11 +67,11 @@ Color Color::operator-(const Color& c) {
 }
 
 bool operator==(const Color& c1, const Color& c2) {
-	return (c1.cardinal == c2.cardinal) && (c1.kind == c2.kind);
+	return (c1.cardinal == c2.cardinal) && (c1.k == c2.k);
 }
 
 bool operator!=(const Color& c1, const Color& c2) {
-	return (c1.cardinal != c2.cardinal) || (c1.kind != c2.kind);
+	return (c1.cardinal != c2.cardinal) || (c1.k != c2.k);
 }
 
 bool operator<(const Color& c1, const Color& c2) {

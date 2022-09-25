@@ -68,6 +68,7 @@ Color Color::operator-(const Color& c) {
 
 bool operator==(const Color& c1, const Color& c2) {
 	return (c1.cardinal == c2.cardinal) && (c1.k == c2.k);
+
 }
 
 bool operator!=(const Color& c1, const Color& c2) {

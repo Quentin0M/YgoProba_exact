@@ -10,8 +10,9 @@ private:
 	int s = 0;
 
 public:
-
-	/// CONSTRUCTORS / DESTRUCTOR
+	/////////////////////////////////
+	/// CONSTRUCTORS / DESTRUCTOR ///
+	/////////////////////////////////
 
 	Hand();
 	Hand(const Hand&);
@@ -21,11 +22,21 @@ public:
 	~Hand();
 
 
+	/////////////////////////
+	/// GETTERS / SETTERS ///
+	/////////////////////////
 
-	/// GETTERS / SETTERS
-
-	int size();
+	const int size() const;
 	Color& front();
+
+	/////////////////////
+	/// OTHER METHODS ///
+	/////////////////////
+	
+	// Verifies if 2 hands have the same kind of cards
+	bool isCompatible(const Hand&);
+	// verifies if a hand satisfies an objective hand
+	bool satisfies(const Hand&);
 
 	/// OPERATOR OVERRIDES
 
